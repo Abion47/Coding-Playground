@@ -1,0 +1,20 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Tables\Tables.cs">
+    <Files>
+      <File FileName="Types\Spec.txt" Line="22" Column="1" />
+      <File FileName="Types\ShortFraction.cs" Line="1" Column="1" />
+      <File FileName="Types\Fixed.cs" Line="1" Column="1" />
+      <File FileName="Types\FWord.cs" Line="1" Column="1" />
+      <File FileName="Types\UFWord.cs" Line="1" Column="1" />
+      <File FileName="Types\F2Dot14.cs" Line="1" Column="1" />
+      <File FileName="Types\LongDateTime.cs" Line="1" Column="1" />
+      <File FileName="Tables\Tables.cs" Line="15" Column="21" />
+      <File FileName="Conversions.cs" Line="20" Column="13" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -1,0 +1,141 @@
+﻿Data Types
+
+The data types used in TrueType font files are listed in Table 1 below.
+
+Table 1 : The 'sfnt' data types
+Macintosh Data type 	OS/2 Data Type 	Description
+uint8 			BYTE 	8-bit unsigned integer
+int8 			CHAR 	8-bit signed integer
+uint16 			USHORT 	16-bit unsigned integer
+int16 			SHORT 	16-bit signed integer
+uint32 			ULONG 	32-bit unsigned integer
+int32 			LONG 	32-bit signed integer
+shortFrac 		- 		16-bit signed fraction
+Fixed 			- 		16.16-bit signed fixed-point number
+FWord 			- 		16-bit signed integer that describes a quantity in FUnits, the smallest measurable distance in em space.
+uFWord 			- 		16-bit unsigned integer that describes a quantity in FUnits, the smallest measurable distance in em space.
+F2Dot14 		- 		16-bit signed fixed number with the low 14 bits representing fraction.
+longDateTime 	- 		The long internal format of a date in seconds since 12:00 midnight, January 1, 1904. It is represented as a signed 64-bit integer.
+
+NOTE: A shortFrac is an int16 with a bias of 14. This means it can represent numbers between 1.999 (0x7fff) and -2.0 (0x8000). 1.0 is stored as 16384 (0x4000) and -1.0 is stored as -16384 (0xc000).
+ 
+
+TrueType Font files: an overview
+
+A TrueType font file consists of a sequence of concatenated tables. A table is a sequence of words. Each table must be long aligned and padded with zeroes if necessary.
+
+The first of the tables is the font directory, a special table that facilitates access to the other tables in the font. The directory is followed by a sequence of tables containing the font data. These tables can appear in any order. Certain tables are required for all fonts. Others are optional depending upon the functionality expected of a particular font.
+
+The tables have names known as tags. Tags have the type uint32. Currently defined tag names consist of four characters. Tag names with less than four characters have trailing spaces. When tag names are shown in text they are enclosed in straight quotes.
+
+Tables that are required must appear in any valid TrueType font file. The required tables and their tag names are shown in Table 2.
+
+Table 2: The required tables
+Tag 	Table
+'cmap' 	character to glyph mapping
+'glyf' 	glyph data
+'head' 	font header
+'hhea' 	horizontal header
+'hmtx' 	horizontal metrics
+'loca' 	index to location
+'maxp' 	maximum profile
+'name' 	naming
+'post' 	PostScript
+
+Warning!
+
+Apple makes a distinction between a "TrueType font" (which refers to a particular font outline definition technology) and an "sfnt-housed font," which refers to any font which uses the same packaging format as a TrueType font: that is, it uses the same directory structure and the same table format and meaning for any tables present.
+
+This is an important distinction, because Apple's Open Font Architecture (OFA) allows other varieties of sfnt-housed font to be used on the Mac OS, most notably bitmap only fonts and OpenType fonts. Informally, people often to any sfnt-housed font as a "TrueType font," but this is strictly speaking inaccurate.
+
+The "required" tables listed in Table 2 are only required for TrueType fonts. Other varieites of sfnt-housed font may not have them. For example, bitmap-only sfnt-housed fonts (such as the Beijing and Taipei system fonts for Chinese shipped by Apple) do not have an 'hmtx', 'hhea' or 'head' table. ATSUI, Apple's rendering system for Unicode-encoded text, does require that any sfnt-housed font have a 'cmap' and 'name' table.
+
+For font vendors: If you are unsure whether a particular table should be included for your non-TrueType sfnt-housed font, it is generally safe to include it, or you may contact Apple for advice.
+
+For font users: Never assume that any particular table is present in a font on the Mac OS. Fonts may be non-TrueType sfnt-housed fonts and lack some of TrueType's required tables. Moreover, fonts may be ill-formed and yet installed. Provide graceful error handling if a font you are using lacks a table you require.
+
+Optional tables may be needed depending upon the functionality expected of a given font file'. The optional tables and their tag names are listed in Table 3. The 'hdmx' table is used on Macintosh platforms only. The 'OS/2' table is required for fonts that are to be used on that platform but appears in the optional table because it is not required for all TrueType font files.
+
+Apple Advanced Typography (AAT) Tables are used with the Line Layout capability of Apple's QuickDraw GX and Apple Type Services for Unicode™ Imaging.
+
+Additional tables may be defined to support other platforms, such as OpenType, or to provide for future expansion. Tags for these tables must be registered. Contact Apple Developer Technical Support for information regarding the registration process. Tag names consisting of all lower case letters are reserved for Apple's use.
+
+Table 3: The optional tables
+Tag 	Table
+'cvt ' 	control value
+'fpgm' 	font program
+'hdmx' 	horizontal device metrics
+'kern' 	kerning
+'OS/2' 	OS/2
+'prep' 	control value program
+
+
+The Font Directory
+
+The font directory, the first of the tables, is a guide to the contents of the font file. It provides the information required to access the data in the other tables. The directory consists of two parts: the offset subtable and the table directory. The offset subtable records the number of tables in the font and provides offset information enabling quick access to the directory tables. The table directory consists of a sequence of entries, one for each table in the font.
+
+ 
+The offset subtable
+
+The offset subtable, documented in Table 4, begins with the scaler type of the font. The number of tagged tables in the 'sfnt' follows.The table directory itself and any subtables are not included in this count. The entries for searchRange, entrySelector and rangeShift are used to facilitate quick binary searches of the table directory that follows. Unless a font has a large number of tables, a sequential search will be fast enough.
+
+If a faster search is necessary, a binary search is most easily done on a number of entries that is a power of two. This makes it possible to cut the number of items to search in half by shifting. The remaining offset subtable entries should be set as follows:
+
+    searchRange is the largest power of two less than or equal to the number of items in the table, i.e. the largest number of items that can be easily searched.
+    rangeShift is the number of items minus searchRange; i.e. the number of items that will not get looked at if you only look at searchRange items. 
+
+Before the search loop starts, compare the target item to the item with number rangeShift. If the target item is less than rangeShift, search from the beginning of the table. If it is greater, search starting at the item with number rangeShift.
+
+    entrySelector is log2(searchRange). It tells how many iterations of the search loop are needed. (i.e. how many times to cut the range in half) 
+
+Note that the searchRange, the entrySelector and the rangeShift are all multiplied by 16 which represents the size of a directory entry.
+
+Table 4 : The offset subtable
+Type 	Name 	Description
+uint32 	scaler type 	A tag to indicate the OFA scaler to be used to rasterize this font; see the note on the scaler type below for more information.
+uint16 	numTables 	number of tables
+uint16 	searchRange 	(maximum power of 2 <= numTables)*16
+uint16 	entrySelector 	log2(maximum power of 2 <= numTables)
+uint16 	rangeShift 	numTables*16-searchRange
+The scaler type
+
+The scaler type is used by the Open Font Architecture (OFA) which was introduced with QuickDraw GX and is now built in to the Mac OS starting with Mac OS 8.5. OFA allows different font scalers to wrap different font formats within the basic structure of a TrueType font; the scaler type in the offset subtable of the font's directory is used to indicate which scaler should be used with a particular font. (Non-TrueType fonts housed within the same structure as a TrueType font are referred to as "sfnt-housed fonts.")
+
+The values 'true' (0x74727565) and 0x00010000 are recognized by the Mac OS as referring to TrueType fonts. The value 'typ1' (0x74797031) is recognized as referring to the old style of PostScript font housed in a sfnt wrapper. Other values are recognized by other OFA scalers.
+
+Fonts produced specifically for the Mac OS should use 'true' (0x74727565) for the scaler type value. Fonts for Windows must use 0x00010000.
+The table directory
+
+The table directory follows the offset subtable. Entries in the table directory must be sorted in ascending order by tag. Each table in the font file must have its own table directory entry. Table 5 documents the structure of the table directory.
+
+Table 5: The table directory
+Type 	Name 	Description
+uint32 	tag 	4-byte identifier
+uint32 	checkSum 	checksum for this table
+uint32 	offset 	offset from beginning of sfnt
+uint32 	length 	length of this table in byte (actual length not padded length)
+
+The table directory includes checkSum, a number which can be used to verify the identity of and the integrity of the data in its associated tagged table. Table checksums are the unsigned sum of the longs in a table. The following C function can be used to determine the checksum of a given table:
+
+uint32 CalcTableChecksum(uint32 *table, uint32 numberOfBytesInTable)
+    {
+    uint32 sum = 0;
+    uint32 nLongs = (numberOfBytesInTable + 3) / 4;
+
+    while (nLongs-- > 0)
+        sum += *table++;
+
+    return sum;
+    }
+
+To calculate the checkSum for the 'head' table which itself includes the checkSumAdjustment entry for the entire font, do the following:
+
+    Set the checkSumAdjustment to 0.
+    Calculate the checksum for all the tables including the 'head' table and enter that value into the table directory.
+    Calculate the checksum for the entire font.
+    Subtract that value from the hex value B1B0AFBA.
+    Store the result in checkSumAdjustment. 
+
+The checkSum for the 'head table which includes the checkSumAdjustment entry for the entire font is now incorrect. That is not a problem. Do not change it. An application attempting to verify that the 'head' table has not changed should calculate the checkSum for that table by not including the checkSumAdjustment value, and compare the result with the entry in the table directory.
+
+The table directory also includes the offset of the associated tagged table from the beginning of the font file and the length of that table.

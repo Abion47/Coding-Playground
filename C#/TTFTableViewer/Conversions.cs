@@ -15,7 +15,9 @@ namespace TTFTableViewer
             val = val << 8;
             val += arr[startIndex + 1];
 
-            float 
+			//float 
+
+			return 0;
         }
 
         public static float ByteArrayToFixed(byte[] arr, int startIndex = 0)
