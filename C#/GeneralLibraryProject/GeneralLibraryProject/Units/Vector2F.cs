@@ -14,6 +14,7 @@ namespace org.general.Units
         public float Y { get { return y; } set { this.y = value; } }
 
         public Vector2F() : this(0, 0) { }
+        public Vector2F(double x, double y) : this((float)x, (float) y) { }
         public Vector2F(float x, float y) { this.x = x; this.y = y; }
 
         public bool IsEmpty() { return float.IsNaN(x) && float.IsNaN(y); }

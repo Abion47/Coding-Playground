@@ -11,11 +11,18 @@ namespace org.general
 {
     public class Drawing
     {
+        public static int Width = Int32.MaxValue;
+        public static int Height = Int32.MaxValue;
+
         public class Pixel
         {
-            public static unsafe void SetPixel(ref byte* ptr, int stride, int bpp, Color c, Vector2 p)
+            public static unsafe void SetPixel(ref byte* ptr, int stride, int bpp, Color c, Vector2 p) { SetPixel(ref ptr, stride, bpp, c, p.X, p.Y); }
+            public static unsafe void SetPixel(ref byte* ptr, int stride, int bpp, Color c, int x, int y)
             {
-                int idx = (p.Y * stride) + (p.X * bpp);
+                if (x < 0 || x >= Width || y < 0 || y >= Height)
+                    return;
+
+                int idx = (y * stride) + (x * bpp);
                 ptr[idx] = c.B;
                 ptr[idx + 1] = c.G;
                 ptr[idx + 2] = c.R;
@@ -238,7 +245,74 @@ namespace org.general
 
         public class Circle
         {
+            public static unsafe void Draw(ref byte* ptr, int stride, int bpp, Color c, Vector2F center, float r)
+            {
+                int b = (int)(r + 0.5f);
+                int lastX = b;
+                for (int y = 0; y <= b; y++)
+                {
+                    float a = y == 0 ? 0 : (float)Math.Asin(y / r);
+                    int x = (int)(Math.Cos(a) * r + 0.5f);
 
+                    if (x != lastX)
+                    {
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(lastX - 1, y) + center, new Vector2F(x, y) + center);
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(lastX - 1, -y) + center, new Vector2F(x, -y) + center);
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(-lastX + 1, y) + center, new Vector2F(-x, y) + center);
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(-lastX + 1, -y) + center, new Vector2F(-x, -y) + center);
+                    }
+                    else
+                    {
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(x + center.X), (int)(y + center.Y));
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(x + center.X), (int)(-y + center.Y));
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(-x + center.X), (int)(y + center.Y));
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(-x + center.X), (int)(-y + center.Y));
+                    }
+
+                    lastX = x;
+                }
+            }
+
+            public static unsafe void Fill(ref byte* ptr, int stride, int bpp, Color c, Vector2F center, float r, int steps = 180)
+            {
+                int b = (int)(r + 0.5f);
+                int lastX = b;
+                for (int y = 0; y <= b; y++)
+                {
+                    float a = y == 0 ? 0 : (float)Math.Asin(y / r);
+                    int x = (int)(Math.Cos(a) * r + 0.5f);
+
+                    if (x != lastX)
+                    {
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(lastX - 1, y) + center, new Vector2F(x, y) + center);
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(lastX - 1, -y) + center, new Vector2F(x, -y) + center);
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(-lastX + 1, y) + center, new Vector2F(-x, y) + center);
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(-lastX + 1, -y) + center, new Vector2F(-x, -y) + center);
+
+                        //int inc = lastX < x ? 1 : -1;
+                        for (int i = x; i <= lastX - 1; i++)
+                        {
+                            Line.Draw(ref ptr, stride, bpp, c, new Vector2F(i, -y) + center, new Vector2F(i, y) + center);
+                            Line.Draw(ref ptr, stride, bpp, c, new Vector2F(-i, -y) + center, new Vector2F(-i, y) + center);
+                        }
+                    }
+                    else
+                    {
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(x + center.X), (int)(y + center.Y));
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(x + center.X), (int)(-y + center.Y));
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(-x + center.X), (int)(y + center.Y));
+                        Pixel.SetPixel(ref ptr, stride, bpp, c, (int)(-x + center.X), (int)(-y + center.Y));
+
+                        Line.Draw(ref ptr, stride, bpp, c, new Vector2F(x, -y) + center, new Vector2F(x, y) + center);
+                    }
+
+                    
+
+                    
+
+                    lastX = x;
+                }
+            }
         }
 
         public class Ellipse
@@ -248,22 +322,22 @@ namespace org.general
 
         public class Bezier
         {
-            public static unsafe void Draw(byte* ptr, int stride, int bpp, Color c, Vector2F start, Vector2F end, Vector2F[] controlPoints)
+            public static unsafe void Draw(ref byte* ptr, int stride, int bpp, Color c, Vector2F[] controlPoints, int steps)
             {
-                Vector2F[] anchors = new Vector2F[controlPoints.Length + 2];
-                anchors[0] = start;
-                anchors[anchors.Length - 1] = end;
+                Vector2F point = null;
+                Vector2F last = null;
 
-                for (int i = 0; i < controlPoints.Length; i++)
+                for (int i = 0; i <= steps; i++)
                 {
-                    anchors[i + 1] = controlPoints[i];
-                }
+                    float t = Functions.Interpolation.Lerp(0.0f, 1.0f, (float)i / steps);
+                    point = FindPointInCurve(controlPoints, t);
 
-                List<Vector2F> points = new List<Vector2F>();
+                    if (last != null)
+                    {
+                        Line.Draw(ref ptr, stride, bpp, c, last, point);
+                    }
 
-                for (float t = 0.0f; t <= 1.0f; t += 0.001f)
-                {
-                    points.Add(FindPointInCurve(anchors, t));
+                    last = point;
                 }
             }
 
