@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Units\Box.cs" />
     <Compile Include="ComplexStructures\PointMap.cs" />
     <Compile Include="Drawing.cs" />
     <Compile Include="Functions.cs" />

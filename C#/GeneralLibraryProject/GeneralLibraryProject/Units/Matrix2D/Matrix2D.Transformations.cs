@@ -7,7 +7,7 @@ namespace org.general.Units
 {
     partial class Matrix2D
     {
-        public static Matrix2D CreateTransformationMatrix()
+        public static Matrix2D Create2DTransformationMatrix()
         {
             return CreateIdentity(3);
         }

@@ -21,6 +21,7 @@ namespace org.general
         {
             using (Bitmap bmp = new Bitmap(500, 500, PixelFormat.Format32bppArgb))
             {
+                using (Graphics g = Graphics.FromImage(bmp)) g.FillRectangle(Brushes.White, 0, 0, 500, 500);
                 unsafe
                 {
                     BitmapData data = bmp.LockBits(new Rectangle(0, 0, 500, 500), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
@@ -28,68 +29,53 @@ namespace org.general
                     byte* ptr = (byte*)data.Scan0;
                     int bpp = 4;
 
-                    
-
                     Drawing.Width = 500;
                     Drawing.Height = 500;
 
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
-                    Drawing.Bezier.Draw(
-                        ref ptr,
-                        stride,
-                        bpp,
-                        Color.Black,
-                        new Vector2F[] { 
-                            new Vector2F(50, 50), 
-                            new Vector2F(250, 50),
-                            new Vector2F(50, 300),
-                            new Vector2F(350, 350)},
-                        30);
 
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Red, new Vector2F(50, 50), 5);
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Red, new Vector2F(250, 50), 5);
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Red, new Vector2F(50, 300), 5);
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Red, new Vector2F(350, 350), 5);
-
-                    //Drawing.Circle.Draw(ref ptr, stride, bpp, Color.Blue, new Vector2F(125, 250), 100);
-                    //Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Blue, new Vector2F(250, 250), 100);
+                    //Drawing.Bezier.Draw(ref ptr, stride, bpp, Color.Black, new Vector2F[] { new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400) }, 1000000);
 
                     watch.Stop();
-                    Console.WriteLine("Atan Time: " + watch.ElapsedMilliseconds + "ms");
+                    Console.WriteLine("Recursive Time: " + watch.ElapsedMilliseconds + "ms");
+                    watch.Reset();
+                    watch.Start();
 
+                    //Drawing.Bezier.DrawCubic(ref ptr, stride, bpp, Color.Blue, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400), 1000000);
+
+                    watch.Stop();
+                    Console.WriteLine("Cubic Time: " + watch.ElapsedMilliseconds + "ms");
+                    watch.Reset();
+                    watch.Start();
+
+                    //Drawing.Bezier.DrawMagic(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400), 1000000);
+
+                    watch.Stop();
+                    Console.WriteLine("Magic Time: " + watch.ElapsedMilliseconds + "ms");
+                    watch.Reset();
+                    watch.Start();
+
+                    //Drawing.Bezier.DrawAdaptiveStep(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400));
+
+                    
+
+                    /*Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(150, 150), new Vector2F(400, 25));
+                    Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(400, 25), new Vector2F(225, 300));
+                    Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(225, 300), new Vector2F(400, 400));
+
+                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Red, new Vector2F(150, 150), 5);
+                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Blue, new Vector2F(400, 25), 5);
+                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Yellow, new Vector2F(225, 300), 5);
+                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Green, new Vector2F(400, 400), 5);*/
+
+                    Drawing.Quadrilateral.Fill(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400));
+                    watch.Stop();
+                    Console.WriteLine("Adaptive Time: " + watch.ElapsedMilliseconds + "ms");
                     bmp.UnlockBits(data);
-
-                    //GetCardImages();
-
-                    //GenerateLinearFisheyeDistortionMap();
-
-                    /*Console.WriteLine("{");
-                    foreach (var elem in list)
-                    {
-                        Console.WriteLine("\t" + elem.face + " : " + elem.value);
-                    }
-                    Console.WriteLine("}");
-
-                    Console.WriteLine();
-                    Console.WriteLine();
-
-                    Console.WriteLine("{");
-                    for (int i = 0; i < native.Count; i++)
-                    {
-                        Console.WriteLine("\t{");
-                        for (int j = 0; j < native[i].Count; j++)
-                        {
-                            Console.WriteLine("\t\t" + native[i][j].face + " : " + native[i][j].value);
-                        }
-                        Console.WriteLine("\t}");
-                    }
-                    Console.WriteLine("}");*/
-
-
                 }
 
-                bmp.Save("curve.png");
+                bmp.Save("quad.png");
             }
 
             Console.WriteLine("\n\nDone!");
@@ -185,8 +171,8 @@ namespace org.general
         static unsafe void GenerateRadialFisheyeDistortionMap()
         {
             float effectDist = 250f;
-            float maxDist = Utility.Distance(0f, 0f, 512f, 512f);
-            float maxShortDist = Utility.Distance(0f, 0f, 512f - 250f, 512f - 250f);
+            float maxDist = GeometryUtility.Distance(0f, 0f, 512f, 512f);
+            float maxShortDist = GeometryUtility.Distance(0f, 0f, 512f - 250f, 512f - 250f);
 
             Bitmap bmp = new Bitmap(1024, 1024, PixelFormat.Format32bppArgb);
             BitmapData data = bmp.LockBits(new Rectangle(0, 0, 1024, 1024), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
@@ -204,7 +190,7 @@ namespace org.general
                     ptr[idx] = 0;
                     ptr[idx + 3] = 255;
 
-                    float dist = Utility.Distance((float)x, (float)y, 512f, 512f);
+                    float dist = GeometryUtility.Distance((float)x, (float)y, 512f, 512f);
 
                     if (dist >= effectDist)
                     {

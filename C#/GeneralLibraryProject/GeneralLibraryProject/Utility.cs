@@ -1,4 +1,5 @@
-﻿using System;
+﻿using org.general.Units;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,7 +10,102 @@ namespace org.general
 {
     class Utility
     {
-        public static RectangleF GetBoundingBox(PointF[] points)
+        
+    }
+
+    class GeometryUtility
+    {
+        public static PointF FindIntersectionPoint(PointF p1, PointF p2, PointF p3, PointF p4) { return FindIntersectionPoint(p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y).ToSystemPoint(); }
+        public static Vector2F FindIntersectionPoint(Vector2F p1, Vector2F p2, Vector2F p3, Vector2F p4) { return FindIntersectionPoint(p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y); }
+        public static Vector2F FindIntersectionPoint(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        {
+            float rx = x2 - x1;
+            float ry = y2 - y1;
+            float sx = x4 - x3;
+            float sy = y4 - y3;
+
+            float rxs = rx * sy - ry * sx;
+            float qpx = x3 - x1;
+            float qpy = y3 - y1;
+            float qpxr = qpx * ry - rx * qpy;
+
+            if (rxs.IsZero())
+            {
+                return Vector2F.Empty;
+            }
+
+            float qpxs = qpx * sy - sx * qpy;
+            float t = qpxs / rxs;
+            float u = qpxr / rxs;
+
+            if (0 <= t && t < 1
+                && 0 <= u && u <= 1)
+            {
+                return new Vector2F(x1 + (t * rx), y1 + (t * ry));
+            }
+
+            return Vector2F.Empty;
+
+            /*float a1 = y2 - y1;
+            float b1 = x2 - x1;
+            float c1 = a1 * x1 + b1 * x1;
+
+            float a2 = y4 - y3;
+            float b2 = x4 - x3;
+            float c2 = a2 * x3 + b2 * x3;
+
+            float det = a1 * b2 - a2 * b1;
+
+            if (det == 0)
+            {
+                return Vector2F.Empty;
+            }
+            else
+            {
+                Vector2F ret = new Vector2F(
+                    (b2 * c1 - b1 * c2) / det,
+                    (a1 * c2 - a2 * c1) / det);
+
+                if (Math.Min(x1, x2) <= ret.X
+                    && ret.X <= Math.Max(x1, x2)
+                    && Math.Min(y1, y2) <= ret.Y
+                    && ret.Y <= Math.Max(y1, y2))
+                {
+                    return ret;
+                }
+                else
+                {
+                    return Vector2F.Empty;
+                }
+            }*/
+        }
+
+        public static float Distance(PointF q1, PointF q2)
+        {
+            return Distance(q1.X, q1.Y, q2.X, q2.Y);
+        }
+        public static float Distance(Vector2F q1, Vector2F q2)
+        {
+            return Distance(q1.X, q1.Y, q2.X, q2.Y);
+        }
+        public static float Distance(float x1, float y1, float x2, float y2)
+        {
+            return (float)Math.Sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+        }
+
+        public static float GetSlope(PointF p1, PointF p2)
+        {
+            return (p2.Y - p1.Y) / (p2.X - p1.X);
+        }
+        public static float GetSlope(Vector2F p1, Vector2F p2)
+        {
+            return (p2.Y - p1.Y) / (p2.X - p1.X);
+        }
+    }
+
+    public class PolygonUtility
+    {
+        public static RectangleF GetBoundingBox(params PointF[] points)
         {
             float minX = float.MaxValue;
             float minY = float.MaxValue;
@@ -26,57 +122,59 @@ namespace org.general
 
             return new RectangleF(minX, minY, maxX - minX, maxY - minY);
         }
-
-        public static PointF FindIntersectionPoint(PointF p1, PointF p2, PointF p3, PointF p4)
+        public static BoxF GetBoundingBox(params Vector2F[] points)
         {
-            float a1 = p2.Y - p1.Y;
-            float b1 = p2.X - p1.X;
-            float c1 = a1 * p1.X + b1 * p1.X;
+            float minX = float.MaxValue;
+            float minY = float.MaxValue;
+            float maxX = float.MinValue;
+            float maxY = float.MinValue;
 
-            float a2 = p4.Y - p3.Y;
-            float b2 = p4.X - p3.X;
-            float c2 = a2 * p3.X + b2 * p3.X;
-
-            float det = a1 * b2 - a2 * b1;
-
-            if (det == 0)
+            foreach (var p in points)
             {
-                return PointF.Empty;
+                minX = Math.Min(minX, p.X);
+                minY = Math.Min(minY, p.Y);
+                maxX = Math.Max(maxX, p.X);
+                maxY = Math.Max(maxY, p.Y);
             }
-            else
+
+            return new BoxF(minX, minY, maxX - minX, maxY - minY);
+        }
+        public static Box GetBoundingBox(params Vector2[] points)
+        {
+            int minX = int.MaxValue;
+            int minY = int.MaxValue;
+            int maxX = int.MinValue;
+            int maxY = int.MinValue;
+
+            foreach (var p in points)
             {
-                PointF ret = new PointF(
-                    (b2 * c1 - b1 * c2) / det,
-                    (a1 * c2 - a2 * c1) / det);
-
-                if (Math.Min(p1.X, p2.X) <= ret.X 
-                    && ret.X <= Math.Max(p1.X, p2.X)
-                    && Math.Min(p1.Y, p2.Y) <= ret.Y
-                    && ret.Y <= Math.Max(p1.Y, p2.Y))
-                {
-                    return ret;
-                }
-                else
-                {
-                    return PointF.Empty;
-                }
+                minX = Math.Min(minX, p.X);
+                minY = Math.Min(minY, p.Y);
+                maxX = Math.Max(maxX, p.X);
+                maxY = Math.Max(maxY, p.Y);
             }
+
+            return new Box(minX, minY, maxX - minX, maxY - minY);
         }
 
-        public static float Distance(PointF q1, PointF q2)
+        public static bool PointInPolygon(Vector2F v, params Vector2F[] poly)
         {
-            return Distance(q1.X, q1.Y, q2.X, q2.Y);
-        }
-        public static float Distance(float x1, float y1, float x2, float y2)
-        {
-            return (float)Math.Sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
-        }
+            bool oddNodes = false;
+            int i, j = poly.Length - 1;
+            for (i = 0; i < poly.Length; i++)
+            {
+                if ((poly[i].Y < v.Y && poly[j].Y >= v.Y
+                    || poly[j].Y < v.Y && poly[i].Y >= v.Y)
+                    && (poly[i].X <= v.X || poly[j].X <= v.X))
+                {
+                    oddNodes ^= (poly[i].X + (v.Y - poly[i].Y) / (poly[j].Y - poly[i].Y) * (poly[j].X - poly[i].X) < v.X);
+                }
 
-        public static float GetSlope(PointF p1, PointF p2)
-        {
-            return (p2.Y - p1.Y) / (p2.X - p1.X);
-        }
+                j = i;
+            }
 
+            return oddNodes;
+        }
     }
 
     public class ArrayUtility

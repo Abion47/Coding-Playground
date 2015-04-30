@@ -21,11 +21,16 @@ namespace org.general.Units
         public static Vector2F Empty { get { return new Vector2F(float.NaN, float.NaN); } }
 
         public static Vector2F operator +(Vector2F a, Vector2F b) { return new Vector2F(a.x + b.x, a.y + b.y); }
-        public static Vector2F operator +(Vector2F a, float f) {  return new Vector2F(a.x + f, a.y + f); }
+        public static Vector2F operator +(Vector2F a, float f) { return new Vector2F(a.x + f, a.y + f); }
+        public static Vector2F operator +(float f, Vector2F a) { return new Vector2F(a.x + f, a.y + f); }
         public static Vector2F operator -(Vector2F a, Vector2F b) { return new Vector2F(a.x - b.x, a.y - b.y); }
         public static Vector2F operator -(Vector2F a, float f) { return new Vector2F(a.x - f, a.y - f); }
+        public static Vector2F operator -(float f, Vector2F a) { return new Vector2F(a.x - f, a.y - f); }
+        public static Vector2F operator *(Vector2F a, Vector2F b) { return new Vector2F(a.x * b.x, a.y * b.y); }
+        public static Vector2F operator *(Vector2F a, float f) { return new Vector2F(a.x * f, a.y * f); }
+        public static Vector2F operator *(float f, Vector2F a) { return new Vector2F(a.x * f, a.y * f); }
 
-        public static implicit operator Vector2(Vector2F p) { return new Vector2((int)p.x, (int)p.y); }
+        public static implicit operator Vector2(Vector2F p) { return new Vector2((int)(p.x + 0.5f), (int)(p.y + 0.5f)); }
 
         public float DotProduct(Vector2F other)
         {
@@ -38,7 +43,7 @@ namespace org.general.Units
 
         public override string ToString()
         {
-            return "[ " + x + ", " + y + " ]";
+            return "{ X: " + x.ToString("F") + ", Y: " + y.ToString("F") + " }";
         }
 
         public System.Drawing.PointF ToSystemPoint()
@@ -50,6 +55,18 @@ namespace org.general.Units
         {
             return new Matrix2D(2, 1, new float[] { x, y });
         }
+
+        public Vector2F Perpendicular()
+        {
+            return new Vector2F(this.Y, -this.X);
+        }
+
+        #region Static Classes
+        public static Vector2F Perpendicular(Vector2F v)
+        {
+            return new Vector2F(v.Y, -v.X);
+        }
+        #endregion
 
         public static class Utility
         {
