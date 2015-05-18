@@ -1,4 +1,5 @@
 ﻿using org.general.Units;
+using org.general.Units.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -279,6 +280,17 @@ namespace org.general
             }
         }
 
+        public static T[] DeepCopy<T>(ref T[] array)
+        {
+            T[] arr = new T[array.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                arr[i] = array[i];
+            }
+
+            return arr;
+        }
     }
 
     public class ColorUtility
@@ -291,4 +303,21 @@ namespace org.general
         }
     }
 
+    public class ImageUtility
+    {
+        public static Bitmap ConvertPixelFormat(Bitmap bmp, System.Drawing.Imaging.PixelFormat format)
+        {
+            if (bmp.PixelFormat == format)
+                return bmp;
+
+            Bitmap ret = new Bitmap(bmp.Width, bmp.Height, format);
+
+            using (Graphics g = Graphics.FromImage(ret))
+                g.DrawImage(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height), new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
+
+            return ret;
+        }
+
+        
+    }
 }

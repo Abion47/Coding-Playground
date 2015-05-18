@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
+    <Compile Include="MathF.cs" />
     <Compile Include="Units\Box.cs" />
     <Compile Include="ComplexStructures\PointMap.cs" />
     <Compile Include="Drawing.cs" />
@@ -56,6 +57,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleFunctions.cs" />
     <Compile Include="Units\BoxF.cs" />
+    <Compile Include="Units\Graphics\GBitmap.cs" />
+    <Compile Include="Units\Graphics\GColor.cs" />
+    <Compile Include="Units\Graphics\GColorF.cs" />
     <Compile Include="Units\Matrix2D\Matrix2D.cs" />
     <Compile Include="Units\Matrix2D\Matrix2D.Static.cs" />
     <Compile Include="Units\Shapes.cs" />

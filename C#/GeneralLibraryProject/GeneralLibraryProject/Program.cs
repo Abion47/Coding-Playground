@@ -1,4 +1,5 @@
 ﻿using org.general.Units;
+using org.general.Units.Graphics;
 
 using System;
 using System.Diagnostics;
@@ -19,7 +20,7 @@ namespace org.general
     {
         static void Main(string[] args)
         {
-            using (Bitmap bmp = new Bitmap(500, 500, PixelFormat.Format32bppArgb))
+            /*using (Bitmap bmp = new Bitmap(500, 500, PixelFormat.Format32bppArgb))
             {
                 using (Graphics g = Graphics.FromImage(bmp)) g.FillRectangle(Brushes.White, 0, 0, 500, 500);
                 unsafe
@@ -35,48 +36,24 @@ namespace org.general
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
 
-                    //Drawing.Bezier.Draw(ref ptr, stride, bpp, Color.Black, new Vector2F[] { new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400) }, 1000000);
-
-                    watch.Stop();
-                    Console.WriteLine("Recursive Time: " + watch.ElapsedMilliseconds + "ms");
-                    watch.Reset();
-                    watch.Start();
-
-                    //Drawing.Bezier.DrawCubic(ref ptr, stride, bpp, Color.Blue, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400), 1000000);
-
-                    watch.Stop();
-                    Console.WriteLine("Cubic Time: " + watch.ElapsedMilliseconds + "ms");
-                    watch.Reset();
-                    watch.Start();
-
-                    //Drawing.Bezier.DrawMagic(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400), 1000000);
-
-                    watch.Stop();
-                    Console.WriteLine("Magic Time: " + watch.ElapsedMilliseconds + "ms");
-                    watch.Reset();
-                    watch.Start();
-
-                    //Drawing.Bezier.DrawAdaptiveStep(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400));
-
                     
-
-                    /*Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(150, 150), new Vector2F(400, 25));
-                    Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(400, 25), new Vector2F(225, 300));
-                    Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(225, 300), new Vector2F(400, 400));
-
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Red, new Vector2F(150, 150), 5);
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Blue, new Vector2F(400, 25), 5);
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Yellow, new Vector2F(225, 300), 5);
-                    Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Green, new Vector2F(400, 400), 5);*/
-
-                    Drawing.Quadrilateral.Fill(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400));
                     watch.Stop();
                     Console.WriteLine("Adaptive Time: " + watch.ElapsedMilliseconds + "ms");
                     bmp.UnlockBits(data);
                 }
 
                 bmp.Save("quad.png");
-            }
+            }*/
+
+            //Bitmap bmpg = Imaging.Gradients.DrawTwoPointHorizontalGradient(1500, 250, Color.Red, Color.Blue);
+            //bmpg.Save("grad.png");
+            
+            Bitmap bmp = ImageUtility.ConvertPixelFormat((Bitmap)Bitmap.FromFile("Romsey_River_Test.jpg"), PixelFormat.Format32bppArgb);
+            //Bitmap bmp = ImageUtility.ConvertPixelFormat((Bitmap)Bitmap.FromFile("grad.png"), PixelFormat.Format32bppArgb);
+            GBitmap gbmp = new GBitmap(bmp);
+            GBitmap zoomed = Imaging.Distortions.Zoom(gbmp, -15, -15);
+
+            zoomed.Save("zoomed.png");
 
             Console.WriteLine("\n\nDone!");
             Console.ReadKey();

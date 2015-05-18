@@ -1,4 +1,5 @@
 ﻿using org.general.Units;
+using org.general.Units.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -989,19 +990,42 @@ namespace org.general
         
         }
 
-        public static class Conversion
+        public static class Distortions
         {
-            public static Bitmap ConvertPixelFormat(Bitmap bmp, PixelFormat format)
+            public static unsafe GBitmap Zoom(GBitmap bmp, float zoomFactorX, float zoomFactorY)
             {
-                if (bmp.PixelFormat == format)
-                    return bmp;
+                GBitmap buffer = new GBitmap(bmp.Width, bmp.Height);
 
-                Bitmap ret = new Bitmap(bmp.Width, bmp.Height, format);
+                float cx = buffer.Width / 2f;
+                float cy = buffer.Height / 2f;
 
-                using (Graphics g = Graphics.FromImage(ret))
-                    g.DrawImageUnscaled(bmp, 0, 0);
+                for (int y = 0; y < buffer.Height; y++)
+                {
+                    for (int x = 0; x < buffer.Width; x++)
+                    {
+                        if (x == 919)
+                        {
+                            int z = 0;
+                        }
 
-                return ret;
+                        float rx = (cx - x) / cx;
+                        float ry = (cy - y) / cy;
+                        float sx = x + zoomFactorX * zoomFactorX * rx;
+                        float sy = y + zoomFactorY * zoomFactorY * ry;
+
+                        int x0 = (int)MathF.Clamp(0, bmp.Width - 1, (int)sx);
+                        int x1 = (int)MathF.Clamp(0, bmp.Width - 1, (int)(sx + 0.5f));
+                        int y0 = (int)MathF.Clamp(0, bmp.Height - 1, (int)sy);
+                        int y1 = (int)MathF.Clamp(0, bmp.Height - 1, (int)(sy + 0.5f));
+
+                        float t1 = sx - x0;
+                        float t2 = sy - y0;
+
+                        buffer.SetPixel(x, y, GColor.BilinearInterpolation(ref bmp, x0, y0, x1, y0, x0, y1, x1, y1, t1, t2));
+                    }
+                }
+
+                return buffer;
             }
         }
 
