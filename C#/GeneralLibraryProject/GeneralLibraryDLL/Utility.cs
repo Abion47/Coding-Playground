@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace org.general
 {
-    class Utility
+    public class Utility
     {
         
     }
 
-    class GeometryUtility
+    public class GeometryUtility
     {
         public static PointF FindIntersectionPoint(PointF p1, PointF p2, PointF p3, PointF p4) { return FindIntersectionPoint(p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y).ToSystemPoint(); }
         public static Vector2F FindIntersectionPoint(Vector2F p1, Vector2F p2, Vector2F p3, Vector2F p4) { return FindIntersectionPoint(p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y); }

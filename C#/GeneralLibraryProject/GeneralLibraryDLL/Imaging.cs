@@ -9,7 +9,7 @@ using System.Text;
 
 namespace org.general
 {
-    class Imaging
+    public class Imaging
     {
         public static class Transforms
         {
