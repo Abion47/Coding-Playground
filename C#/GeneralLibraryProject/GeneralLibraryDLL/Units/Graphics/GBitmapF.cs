@@ -5,9 +5,9 @@ using System.Text;
 
 namespace org.general.Units.Graphics
 {
-    public class GBitmap : ICloneable
+    public class GBitmapF : ICloneable
     {
-        private int[] _p;
+        private GColorF[] _p;
         private int _w;
         private int _h;
 
@@ -25,17 +25,18 @@ namespace org.general.Units.Graphics
             private set { this._h = value; }
         }
 
-        public GBitmap(int width, int height)
+        public GBitmapF(int width, int height)
         {
             Width = width;
             Height = height;
-            _p = new int[Height * Width];
+            _p = new GColorF[Height * Width];
+            ArrayUtility.InitializeArrayWithValue<GColorF>(ref _p, new GColorF());
         }
-        public GBitmap(System.Drawing.Bitmap bmp)
+        public GBitmapF(System.Drawing.Bitmap bmp)
         {
             Width = bmp.Width;
             Height = bmp.Height;
-            _p = new int[Height * Width];
+            _p = new GColorF[Height * Width];
 
             System.Drawing.Bitmap buf = (System.Drawing.Bitmap)bmp.Clone();
 
@@ -59,7 +60,7 @@ namespace org.general.Units.Graphics
                     {
                         int idx = row + x * bpp;
                         int value = (ptr[idx + 3] << 24) + (ptr[idx + 2] << 16) + (ptr[idx + 1] << 8) + ptr[idx];
-                        SetPixel(x, y, value);
+                        _p[y * _w + x] = new GColorF(ptr[idx + 2] / 255.0f, ptr[idx + 1] / 255.0f, ptr[idx] / 255.0f, ptr[idx + 3] / 255.0f);
                     }
                 }
 
@@ -69,40 +70,22 @@ namespace org.general.Units.Graphics
             buf.Dispose();
         }
 
-        public GColor GetPixel(int x, int y)
+        public GColorF GetPixel(int x, int y)
         {
-            return new GColor(_p[y * _w + x]);
+            return _p[y * _w + x];
         }
-        public GColor GetPixel(Vector2 p)
+        public GColorF GetPixel(Vector2 p)
         {
             return GetPixel(p.X, p.Y);
         }
 
-        public int GetPixelInt(int x, int y)
+        public void SetPixel(int x, int y, GColorF c)
         {
-            return _p[y * _w + x];
+            _p[y * _w + x] = c;
         }
-        public int GetPixelInt(Vector2 p)
-        {
-            return GetPixelInt(p.X, p.Y);
-        }
-
-        public void SetPixel(int x, int y, GColor c)
-        {
-            _p[y * _w + x] = c.IntValue;
-        }
-        public void SetPixel(Vector2 p, GColor c)
+        public void SetPixel(Vector2 p, GColorF c)
         {
             SetPixel(p.X, p.Y, c);
-        }
-
-        public void SetPixel(int x, int y, int v)
-        {
-            _p[y * _w + x] = v;
-        }
-        public void SetPixel(Vector2 p, int v)
-        {
-            SetPixel(p.X, p.Y, v);
         }
 
         public System.Drawing.Bitmap ToSystemBitmap()
@@ -123,7 +106,7 @@ namespace org.general.Units.Graphics
                     for (int x = 0; x < Width; x++)
                     {
                         int idx = row + x * bpp;
-                        GColor c = GetPixel(x, y);
+                        GColor c = (GColor)GetPixel(x, y);
                         ptr[idx] = c.B;
                         ptr[idx + 1] = c.G;
                         ptr[idx + 2] = c.R;
@@ -139,8 +122,8 @@ namespace org.general.Units.Graphics
 
         public object Clone()
         {
-            GBitmap bmp = new GBitmap(_w, _h);
-            bmp._p = ArrayUtility.DeepCopy<int>(ref _p);
+            GBitmapF bmp = new GBitmapF(_w, _h);
+            bmp._p = ArrayUtility.DeepCopy<GColorF>(ref _p);
             return bmp;
         }
 

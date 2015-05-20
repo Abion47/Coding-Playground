@@ -16,7 +16,7 @@ namespace org.general
             public enum ResizeMethod
             {
                 NEAREST_NEIGHBOR,
-                BILINEAR,
+                Berp,
                 BICUBIC
             }
             public static Bitmap ResizeImage(Bitmap bmp, float sx, float sy, ResizeMethod method)
@@ -56,8 +56,8 @@ namespace org.general
                             case ResizeMethod.NEAREST_NEIGHBOR:
                                 values = CalculateNearestNeighbor(ref s_ptr, ref d_ptr, s_stride, d_stride, bpp, x, y, dx, dy);
                                 break;
-                            case ResizeMethod.BILINEAR:
-                                values = CalculateBilinear(ref s_ptr, ref d_ptr, s_stride, d_stride, bpp, x, y, bmp.Width, bmp.Height, width, height);
+                            case ResizeMethod.Berp:
+                                values = CalculateBerp(ref s_ptr, ref d_ptr, s_stride, d_stride, bpp, x, y, bmp.Width, bmp.Height, width, height);
                                 break;
                             case ResizeMethod.BICUBIC:
                                 values = CalculateBicubic(ref s_ptr, ref d_ptr, s_stride, d_stride, bpp, x, y, bmp.Width, bmp.Height, width, height);
@@ -88,15 +88,15 @@ namespace org.general
 
                 return new byte[] { b, g, r, a };
             }
-            private static unsafe byte[] CalculateBilinear(ref byte* s_ptr, ref byte* d_ptr, int s_stride, int d_stride, int bpp, int x, int y, int s_width, int s_height, int d_width, int d_height)
+            private static unsafe byte[] CalculateBerp(ref byte* s_ptr, ref byte* d_ptr, int s_stride, int d_stride, int bpp, int x, int y, int s_width, int s_height, int d_width, int d_height)
             {
                 byte b, g, r, a;
 
                 float tx = (float)x / d_width;
                 float ty = (float)y / d_height;
 
-                float xMap = Functions.Interpolation.Lerp(0, s_width - 1, tx);
-                float yMap = Functions.Interpolation.Lerp(0, s_height - 1, ty);
+                float xMap = MathF.Lerp(0, s_width - 1, tx);
+                float yMap = MathF.Lerp(0, s_height - 1, ty);
 
                 int x1 = (int)xMap;
                 int x2 = (int)xMap + 1;
@@ -117,25 +117,25 @@ namespace org.general
                 int idx10 = (y2 * s_stride) + (x1 * bpp);
                 int idx11 = (y2 * s_stride) + (x2 * bpp);
 
-                b = (byte)Functions.Interpolation.Bilinear(
+                b = (byte)MathF.Berp(
                     (float)s_ptr[idx00], 
                     (float)s_ptr[idx01], 
                     (float)s_ptr[idx10], 
                     (float)s_ptr[idx11], 
                     tx, ty);
-                g = (byte)Functions.Interpolation.Bilinear(
+                g = (byte)MathF.Berp(
                     (float)s_ptr[idx00 + 1],
                     (float)s_ptr[idx01 + 1],
                     (float)s_ptr[idx10 + 1],
                     (float)s_ptr[idx11 + 1],
                     tx, ty);
-                r = (byte)Functions.Interpolation.Bilinear(
+                r = (byte)MathF.Berp(
                     (float)s_ptr[idx00 + 2],
                     (float)s_ptr[idx01 + 2],
                     (float)s_ptr[idx10 + 2],
                     (float)s_ptr[idx11 + 2],
                     tx, ty);
-                a = (byte)Functions.Interpolation.Bilinear(
+                a = (byte)MathF.Berp(
                     (float)s_ptr[idx00 + 3],
                     (float)s_ptr[idx01 + 3],
                     (float)s_ptr[idx10 + 3],
@@ -151,8 +151,8 @@ namespace org.general
                 float tx = (float)x / d_width;
                 float ty = (float)y / d_height;
 
-                float xMap = Functions.Interpolation.Lerp(0, s_width - 1, tx);
-                float yMap = Functions.Interpolation.Lerp(0, s_height - 1, ty);
+                float xMap = MathF.Lerp(0, s_width - 1, tx);
+                float yMap = MathF.Lerp(0, s_height - 1, ty);
 
                 int x1 = (int)xMap - 1;
                 int y1 = (int)yMap - 1;
@@ -196,10 +196,10 @@ namespace org.general
                     aArr[i] = s_ptr[idxArr[i] + 3];
                 }
 
-                b = Functions.Interpolation.Bicubic(bArr, tx, ty);
-                g = Functions.Interpolation.Bicubic(gArr, tx, ty);
-                r = Functions.Interpolation.Bicubic(rArr, tx, ty);
-                a = Functions.Interpolation.Bicubic(aArr, tx, ty);
+                b = MathF.BicubicInterp(bArr, tx, ty);
+                g = MathF.BicubicInterp(gArr, tx, ty);
+                r = MathF.BicubicInterp(rArr, tx, ty);
+                a = MathF.BicubicInterp(aArr, tx, ty);
 
                 /*Bitmap cerpTest = new Bitmap(425, 425, GlobalSettings.DefaultPixelFormat);
 
@@ -217,7 +217,7 @@ namespace org.general
                     int graphYB = (int)(255f - b) + 215;
                     int graphYA = (int)(255f - a) + 320;
 
-                    int y = (int)Functions.Interpolation.Cerp(new float[] { 23f, 0f, 2, 3 }, (float)graphX / 100);
+                    int y = (int)MathF.Cerp(new float[] { 23f, 0f, 2, 3 }, (float)graphX / 100);
 
                     int idx = (y * stride) + (x * bpp);
 
@@ -258,9 +258,9 @@ namespace org.general
 
                 for (int x = 0; x < width; x++)
                 {
-                    byte rValue = (byte)Functions.Interpolation.Lerp((float)start.R, (float)end.R, (float)x / width);
-                    byte gValue = (byte)Functions.Interpolation.Lerp((float)start.G, (float)end.G, (float)x / width);
-                    byte bValue = (byte)Functions.Interpolation.Lerp((float)start.B, (float)end.B, (float)x / width);
+                    byte rValue = (byte)MathF.Lerp((float)start.R, (float)end.R, (float)x / width);
+                    byte gValue = (byte)MathF.Lerp((float)start.G, (float)end.G, (float)x / width);
+                    byte bValue = (byte)MathF.Lerp((float)start.B, (float)end.B, (float)x / width);
 
                     for (int y = 0; y < height; y++)
                     {
@@ -579,19 +579,19 @@ namespace org.general
                         float tx = (float)x / width;
                         float ty = (float)y / height;
 
-                        byte rVal = (byte)Functions.Interpolation.Bilinear(
+                        byte rVal = (byte)MathF.Berp(
                             (float)c00.R,
                             (float)c01.R,
                             (float)c10.R,
                             (float)c11.R,
                             tx, ty);
-                        byte gVal = (byte)Functions.Interpolation.Bilinear(
+                        byte gVal = (byte)MathF.Berp(
                             (float)c00.G,
                             (float)c01.G,
                             (float)c10.G,
                             (float)c11.G,
                             tx, ty);
-                        byte bVal = (byte)Functions.Interpolation.Bilinear(
+                        byte bVal = (byte)MathF.Berp(
                             (float)c00.B,
                             (float)c01.B,
                             (float)c10.B,
@@ -1003,11 +1003,6 @@ namespace org.general
                 {
                     for (int x = 0; x < buffer.Width; x++)
                     {
-                        if (x == 919)
-                        {
-                            int z = 0;
-                        }
-
                         float rx = (cx - x) / cx;
                         float ry = (cy - y) / cy;
                         float sx = x + zoomFactorX * zoomFactorX * rx;
@@ -1021,7 +1016,7 @@ namespace org.general
                         float t1 = sx - x0;
                         float t2 = sy - y0;
 
-                        buffer.SetPixel(x, y, GColor.BilinearInterpolation(ref bmp, x0, y0, x1, y0, x0, y1, x1, y1, t1, t2));
+                        buffer.SetPixel(x, y, GColor.Berp(bmp.GetPixel(x0, y0), bmp.GetPixel(x1, y0), bmp.GetPixel(x0, y1), bmp.GetPixel(x1, y1), t1, t2));
                     }
                 }
 

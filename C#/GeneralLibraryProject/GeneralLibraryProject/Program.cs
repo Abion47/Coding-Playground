@@ -15,46 +15,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 
-namespace org.general
+namespace org.execute
 {
     class Program
     {
         static void Main(string[] args)
         {
-            /*using (Bitmap bmp = new Bitmap(500, 500, PixelFormat.Format32bppArgb))
-            {
-                using (Graphics g = Graphics.FromImage(bmp)) g.FillRectangle(Brushes.White, 0, 0, 500, 500);
-                unsafe
-                {
-                    BitmapData data = bmp.LockBits(new Rectangle(0, 0, 500, 500), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-                    int stride = data.Stride;
-                    byte* ptr = (byte*)data.Scan0;
-                    int bpp = 4;
-
-                    Drawing.Width = 500;
-                    Drawing.Height = 500;
-
-                    Stopwatch watch = new Stopwatch();
-                    watch.Start();
-
-                    
-                    watch.Stop();
-                    Console.WriteLine("Adaptive Time: " + watch.ElapsedMilliseconds + "ms");
-                    bmp.UnlockBits(data);
-                }
-
-                bmp.Save("quad.png");
-            }*/
-
-            //Bitmap bmpg = Imaging.Gradients.DrawTwoPointHorizontalGradient(1500, 250, Color.Red, Color.Blue);
-            //bmpg.Save("grad.png");
             
-            Bitmap bmp = ImageUtility.ConvertPixelFormat((Bitmap)Bitmap.FromFile("Romsey_River_Test.jpg"), PixelFormat.Format32bppArgb);
-            //Bitmap bmp = ImageUtility.ConvertPixelFormat((Bitmap)Bitmap.FromFile("grad.png"), PixelFormat.Format32bppArgb);
-            GBitmap gbmp = new GBitmap(bmp);
-            GBitmap zoomed = Imaging.Distortions.Zoom(gbmp, -15, -15);
-
-            zoomed.Save("zoomed.png");
 
             Console.WriteLine("\n\nDone!");
             Console.ReadKey();
@@ -405,7 +372,7 @@ namespace org.general
 
             for (int x = 0; x < width; x++)
             {
-                int y = (int)Functions.Interpolation.Cerp(new float[] { 23f, 0f, 2, 3 }, (float)x / width);
+                int y = (int)MathF.Cerp(23f, 0f, 2, 3, (float)x / width);
 
                 int idx = (y * stride) + (x * bpp);
 

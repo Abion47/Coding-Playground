@@ -406,7 +406,7 @@ namespace org.general
 
                 for (int i = 0; i <= steps; i++)
                 {
-                    float t = Functions.Interpolation.Lerp(0.0f, 1.0f, (float)i / steps);
+                    float t = MathF.Lerp(0.0f, 1.0f, (float)i / steps);
                     point = FindPointInCurve(controlPoints, t);
 
                     if (last != null)
@@ -451,7 +451,7 @@ namespace org.general
 
                 for (int i = 0; i <= steps; i++)
                 {
-                    float t = Functions.Interpolation.Lerp(0.0f, 1.0f, (float)i / steps);
+                    float t = MathF.Lerp(0.0f, 1.0f, (float)i / steps);
                     point = FindCubicPointInCurve(start, c1, c2, end, t);
                     Pixel.SetPixel(ref ptr, stride, bpp, c, point);
                 }

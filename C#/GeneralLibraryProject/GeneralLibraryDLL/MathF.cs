@@ -7,6 +7,7 @@ namespace org.general
 {
     public class MathF
     {
+        #region Bounding Functions
         /// <summary>
         /// Clamps an input between a minimum value 0.0 and a maximum value 1.0.
         /// </summary>
@@ -27,7 +28,9 @@ namespace org.general
         {
             return f < a ? a : f > b ? b : f;
         }
+        #endregion
 
+        #region Math Functions
         /// <summary>
         /// Returns the absolute value of an input.
         /// </summary>
@@ -52,9 +55,11 @@ namespace org.general
             while (i > 1) i *= i;
             return n ? 1f / i : i;
         }
+        #endregion
 
+        #region Interpolation Functions
         /// <summary>
-        /// Perform a 1-dimensional linear interpolation.
+        /// Perform a 1-dimensional linear interpolation. (A convenience method for LinearInterp.)
         /// </summary>
         /// <param name="a">The starting value.</param>
         /// <param name="b">The ending value.</param>
@@ -62,7 +67,148 @@ namespace org.general
         /// <returns>The interpolated value at t between a and b.</returns>
         public static float Lerp(float a, float b, float t)
         {
+            return LinearInterp(a, b, t);
+        }
+        /// <summary>
+        /// Perform a 1-dimensional linear interpolation.
+        /// </summary>
+        /// <param name="a">The starting value.</param>
+        /// <param name="b">The ending value.</param>
+        /// <param name="t">The interpolation time parameter.</param>
+        /// <returns>The interpolated value at t in the range of [a, b].</returns>
+        public static float LinearInterp(float a, float b, float t)
+        {
             return (1 - t) * a + t * b;
         }
+
+        /// <summary>
+        /// Performs a 1-dimensional cubic interpolation. (Convenience method for CubicInterp.)
+        /// </summary>
+        /// <param name="p0">Preceding point for the cubic spline function.</param>
+        /// <param name="p1">The lower bounds for the interpolation.</param>
+        /// <param name="p2">The upper bounds fot the interpolation.</param>
+        /// <param name="p3">The following point for the cubic spline function.</param>
+        /// <param name="t">The interpolation time parameter.</param>
+        /// <returns>The interpolated value at t in the range of [p1, p2].</returns>
+        public static float Cerp(float p0, float p1, float p2, float p3, float t)
+        {
+            return CubicInterp(p0, p1, p2, p3, t);
+        }
+        /// <summary>
+        /// Performs a 1-dimensional cubic interpolation.
+        /// </summary>
+        /// <param name="p0">Preceding point for the cubic spline function.</param>
+        /// <param name="p1">The lower bounds for the interpolation.</param>
+        /// <param name="p2">The upper bounds fot the interpolation.</param>
+        /// <param name="p3">The following point for the cubic spline function.</param>
+        /// <param name="t">The interpolation time parameter.</param>
+        /// <returns>The interpolated value at t in the range of [p1, p2].</returns>
+        public static float CubicInterp(float p0, float p1, float p2, float p3, float t)
+        {
+            float a0, a1, a2, a3;
+
+            a0 = p3 - p2 - p0 + p1;
+            a1 = p0 - p1 - a0;
+            a2 = p2 - p0;
+            a3 = p1;
+
+            return a0 * (t * t * t) + a1 * (t * t) + a2 * t + a3;
+        }
+
+        /// <summary>
+        /// Performs a 2-dimensional linear interpolation. (A convenience method for BilinearInterp.)
+        /// </summary>
+        /// <param name="q00">Value in the upper left sample site.</param>
+        /// <param name="q01">Value in the upper right sample site.</param>
+        /// <param name="q10">Value in the lower left sample site.</param>
+        /// <param name="q11">Value in the lower right sample site.</param>
+        /// <param name="tx">The first dimension interpolation time parameter.</param>
+        /// <param name="ty">The second dimension interpolation time parameter.</param>
+        /// <returns>The interpolated value at (tx, ty) in the plane of [q00, q01, q10, q11].</returns>
+        public static float Berp(
+                float q00, float q01,
+                float q10, float q11,
+                float tx, float ty)
+        {
+            return BilinearInterp(q00, q01, q10, q11, tx, ty);
+        }
+        /// <summary>
+        /// Performs a 2-dimensional linear interpolation
+        /// </summary>
+        /// <param name="q00">Value in the upper left sample site.</param>
+        /// <param name="q01">Value in the upper right sample site.</param>
+        /// <param name="q10">Value in the lower left sample site.</param>
+        /// <param name="q11">Value in the lower right sample site.</param>
+        /// <param name="tx">The first dimension interpolation time parameter.</param>
+        /// <param name="ty">The second dimension interpolation time parameter.</param>
+        /// <returns>The interpolated value at (tx, ty) in the plane of [q00, q01, q10, q11].</returns>
+        public static float BilinearInterp(
+                float q00, float q01,
+                float q10, float q11,
+                float tx, float ty)
+        {
+            float x1 = Lerp(q00, q01, tx);
+            float x2 = Lerp(q10, q11, tx);
+
+            float r = Lerp(x1, x2, ty);
+
+            return r;
+        }
+
+        /// <summary>
+        /// Performs a 2-dimensional cubic interpolation.
+        /// </summary>
+        /// <param name="p">The array representing a 4x4 grid of sample points. Must have a length of exactly 16.</param>
+        /// <param name="tx">The first dimension interpolation time parameter.</param>
+        /// <param name="ty">The second dimension interpolation time parameter.</param>
+        /// <returns>The interpolated value at (tx, ty) in the plane of [p5, p6, p9, p10].</returns>
+        public static float BicubicInterp(float[] p, float tx, float ty)
+        {
+            if (p.Length != 16)
+                throw new ArgumentException("The number of values passed must be exactly 16.");
+
+            float y1 = Cerp(p[0], p[4], p[8], p[12], ty);
+            float y2 = Cerp(p[1], p[5], p[9], p[13], ty);
+            float y3 = Cerp(p[2], p[6], p[10], p[14], ty);
+            float y4 = Cerp(p[3], p[7], p[11], p[15], ty);
+
+            return Cerp(y1, y2, y3, y4, tx);
+        }
+
+        /// <summary>
+        /// Performs a 3-dimensional linear interpolation.
+        /// </summary>
+        /// <param name="q000">The north-west-top sample point.</param>
+        /// <param name="q001">The north-east-top sample point.</param>
+        /// <param name="q010">The north-west-bottom sample point.</param>
+        /// <param name="q011">The north-east-bottom sample point.</param>
+        /// <param name="q100">The south-west-top sample point.</param>
+        /// <param name="q101">The south-east-top sample point.</param>
+        /// <param name="q110">The south-west-bottom sample point.</param>
+        /// <param name="q111">The south-east-bottom sample point.</param>
+        /// <param name="tx">The first dimension interpolation time value.</param>
+        /// <param name="ty">The second dimension interpolation time value.</param>
+        /// <param name="tz">The third dimension interpolation time value.</param>
+        /// <returns>The interpolated value at (tx, ty, tz) in the cube of [q000, q001, q010, q011, q100, q101, q110, q111].</returns>
+        public static float TrilinearInterp(
+                float q000, float q001, 
+                float q010, float q011, 
+                float q100, float q101, 
+                float q110, float q111, 
+                float tx, float ty, float tz)
+            {
+                float x1 = Lerp(q000, q001, tx);
+                float x2 = Lerp(q010, q011, tx);
+                float x3 = Lerp(q100, q101, tx);
+                float x4 = Lerp(q110, q111, tx);
+
+                float y1 = Lerp(x1, x2, ty);
+                float y2 = Lerp(x3, x4, ty);
+
+                float r = Lerp(y1, y2, tz);
+
+                return r;
+            }
+        #endregion
     }
 }

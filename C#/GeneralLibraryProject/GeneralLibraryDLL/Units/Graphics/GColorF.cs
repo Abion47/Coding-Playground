@@ -64,18 +64,21 @@ namespace org.general.Units.Graphics
         #region Interpolation Functions
         public static GColorF Lerp(GColorF a, GColorF b, float t)
         {
+            return LinearInterp(a, b, t);
+        }
+        public static GColorF LinearInterp(GColorF a, GColorF b, float t)
+        {
             return new GColorF(MathF.Lerp(a.R, b.R, t), MathF.Lerp(a.G, b.G, t), MathF.Lerp(a.B, b.B, t), MathF.Lerp(a.A, b.A, t));
         }
 
-        public static unsafe GColorF BilinearInterpolation(ref GBitmap bmp, int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, float t1, float t2)
+        public static GColorF Berp(GColorF c0, GColorF c1, GColorF c2, GColorF c3, float t1, float t2)
         {
-            GColorF nw = (GColorF)bmp.GetPixel(x0, y0);
-            GColorF ne = (GColorF)bmp.GetPixel(x1, y1);
-            GColorF sw = (GColorF)bmp.GetPixel(x2, y2);
-            GColorF se = (GColorF)bmp.GetPixel(x3, y3);
-
-            GColorF m1 = GColorF.Lerp(nw, ne, t1);
-            GColorF m2 = GColorF.Lerp(sw, se, t1);
+            return BilinearInterp(c0, c1, c2, c3, t1, t2);
+        }
+        public static GColorF BilinearInterp(GColorF c0, GColorF c1, GColorF c2, GColorF c3, float t1, float t2)
+        {
+            GColorF m1 = GColorF.Lerp(c0, c1, t1);
+            GColorF m2 = GColorF.Lerp(c2, c3, t1);
 
             return GColorF.Lerp(m1, m2, t2);
         }

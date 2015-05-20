@@ -7,7 +7,7 @@
     <ProjectGuid>{843E6B6A-EE14-4217-A1A4-D91D4692D4D6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.general</RootNamespace>
+    <RootNamespace>org.execute</RootNamespace>
     <AssemblyName>GeneralLibraryProject</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

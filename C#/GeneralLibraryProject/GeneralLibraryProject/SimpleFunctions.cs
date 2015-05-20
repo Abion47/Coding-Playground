@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace org.general
+namespace org.execute
 {
     public static class SimpleFunctions
     {

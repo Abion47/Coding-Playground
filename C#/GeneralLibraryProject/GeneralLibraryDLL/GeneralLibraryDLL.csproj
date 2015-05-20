@@ -7,7 +7,7 @@
     <ProjectGuid>{AF06F84F-04C2-4875-A04B-ABE2F75278E5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeneralLibraryDLL</RootNamespace>
+    <RootNamespace>org.general</RootNamespace>
     <AssemblyName>GeneralLibraryDLL</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,6 +53,7 @@
     <Compile Include="Units\Box.cs" />
     <Compile Include="Units\BoxF.cs" />
     <Compile Include="Units\Graphics\GBitmap.cs" />
+    <Compile Include="Units\Graphics\GBitmapF.cs" />
     <Compile Include="Units\Graphics\GColor.cs" />
     <Compile Include="Units\Graphics\GColorF.cs" />
     <Compile Include="Units\Matrix2D\Matrix2D.cs" />
