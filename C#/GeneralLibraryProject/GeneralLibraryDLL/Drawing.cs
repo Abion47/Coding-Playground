@@ -245,10 +245,10 @@ namespace org.general
                  { return Draw(c, new Vector2F(p1x, p1y), new Vector2F(p2x, p2y), new Vector2F(p3x, p3y), new Vector2F(p4x, p4y)); }
             public static unsafe Bitmap Draw(Color c, Vector2F p1, Vector2F p2, Vector2F p3, Vector2F p4)
             {
-                float minX = Math.Min(Math.Min(p1.X, p2.X), Math.Min(p3.X, p4.X));
-                float minY = Math.Min(Math.Min(p1.Y, p2.Y), Math.Min(p3.Y, p4.Y));
-                float maxX = Math.Max(Math.Max(p1.X, p2.X), Math.Max(p3.X, p4.X));
-                float maxY = Math.Max(Math.Max(p1.Y, p2.Y), Math.Max(p3.Y, p4.Y));
+                float minX = MathF.Min(MathF.Min(p1.X, p2.X), MathF.Min(p3.X, p4.X));
+                float minY = MathF.Min(MathF.Min(p1.Y, p2.Y), MathF.Min(p3.Y, p4.Y));
+                float maxX = MathF.Max(MathF.Max(p1.X, p2.X), MathF.Max(p3.X, p4.X));
+                float maxY = MathF.Max(MathF.Max(p1.Y, p2.Y), MathF.Max(p3.Y, p4.Y));
 
                 int width = (int)(maxX + minX);
                 int height = (int)(maxY + minY);
@@ -317,12 +317,12 @@ namespace org.general
         {
             public static unsafe void Draw(ref byte* ptr, int stride, int bpp, Color c, Vector2F center, float r)
             {
-                int b = (int)(r + 0.5f);
-                int lastX = b;
+                float b = r + 0.5f;
+                float lastX = b;
                 for (int y = 0; y <= b; y++)
                 {
-                    float a = y == 0 ? 0 : (float)Math.Asin(y / r);
-                    int x = (int)(Math.Cos(a) * r + 0.5f);
+                    float a = y == 0 ? 0 : MathF.Asin(y / r);
+                    float x = MathF.Cos(a) * r + 0.5f;
 
                     if (x != lastX)
                     {
@@ -351,13 +351,13 @@ namespace org.general
                     return;
                 }
 
-                int b = (int)(r + 0.5f);
-                int lastX = b;
+                float b = r + 0.5f;
+                float lastX = b;
                 for (int y = 0; y <= b; y++)
                 {
-                    float a = y == 0 ? 0 : (float)Math.Asin(y / r);
+                    float a = y == 0 ? 0 : MathF.Asin(y / r);
                     if (float.IsNaN(a)) a = 0;
-                    int x = (int)(Math.Cos(a) * r + 0.5f);
+                    float x = MathF.Cos(a) * r + 0.5f;
 
                     if (x != lastX)
                     {
@@ -367,7 +367,7 @@ namespace org.general
                         Line.Draw(ref ptr, stride, bpp, c, new Vector2F(-lastX + 1, -y) + center, new Vector2F(-x, -y) + center);
 
                         //int inc = lastX < x ? 1 : -1;
-                        for (int i = x; i <= lastX - 1; i++)
+                        for (int i = (int)x; i <= lastX - 1; i++)
                         {
                             Line.Draw(ref ptr, stride, bpp, c, new Vector2F(i, -y) + center, new Vector2F(i, y) + center);
                             Line.Draw(ref ptr, stride, bpp, c, new Vector2F(-i, -y) + center, new Vector2F(-i, y) + center);
@@ -382,10 +382,6 @@ namespace org.general
 
                         Line.Draw(ref ptr, stride, bpp, c, new Vector2F(x, -y) + center, new Vector2F(x, y) + center);
                     }
-
-                    
-
-                    
 
                     lastX = x;
                 }

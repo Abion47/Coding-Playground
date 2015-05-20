@@ -8,23 +8,31 @@ namespace org.general.Units
 {
     public class Shapes
     {
-        public struct Triangle
+        public static Vector2F[] CreatePolygon(int points, Vector2F center, float radius, float rotation = 0)
         {
-            PointF v1;
-            PointF v2;
-            PointF v3;
+            Vector2F[] ret = new Vector2F[points];
+            float delta = MathF.PI * 2 / (float)ret.Length;
+
+            for (int i = 0; i < ret.Length; i++)
+            {
+                ret[i] = center + new Vector2F(
+                    MathF.Cos(delta * i + rotation),
+                    MathF.Sin(delta * i + rotation));
+            }
+
+            return ret;
         }
 
-        public static Vector2F[] CreateStar(int points, Vector2F center, float radius, float r = 0, float innerRadiusRatio = 0.5f)
+        public static Vector2F[] CreateStar(int points, Vector2F center, float radius, float rotation = 0, float innerRadiusRatio = 0.5f)
         {
             Vector2F[] ret = new Vector2F[points * 2];
-            float delta = (float)Math.PI * 2 / (float)ret.Length;
+            float delta = MathF.PI * 2 / (float)ret.Length;
             
             for (int i = 0; i < ret.Length; i++)
             {
                 Vector2F v = new Vector2F(
-                    (float)Math.Cos(delta * i + r),
-                    (float)Math.Sin(delta * i + r));
+                    MathF.Cos(delta * i + rotation),
+                    MathF.Sin(delta * i + rotation));
 
                 v.X *= radius;
                 v.Y *= radius;

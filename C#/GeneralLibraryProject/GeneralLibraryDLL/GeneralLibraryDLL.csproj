@@ -45,7 +45,6 @@
     <Compile Include="ComplexStructures\PointMap.cs" />
     <Compile Include="Drawing.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Functions.cs" />
     <Compile Include="GlobalSettings.cs" />
     <Compile Include="Imaging.cs" />
     <Compile Include="MathF.cs" />

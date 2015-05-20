@@ -21,7 +21,9 @@ namespace org.execute
     {
         static void Main(string[] args)
         {
-            
+            double d = SimpleFunctions.ComputeSquareRoot(Math.PI);
+
+            Console.WriteLine("\n\n" + d + "\n");
 
             Console.WriteLine("\n\nDone!");
             Console.ReadKey();

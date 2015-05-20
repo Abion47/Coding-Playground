@@ -7,7 +7,33 @@ namespace org.general
 {
     public class MathF
     {
+        #region Constants
+        public const float PI = (float)Math.PI;
+        #endregion
+
         #region Bounding Functions
+        /// <summary>
+        /// Compares two given values and returns whichever is lesser.
+        /// </summary>
+        /// <param name="a">The first given value.</param>
+        /// <param name="b">The second given value.</param>
+        /// <returns>The lesser of a and b.</returns>
+        public static float Min(float a, float b)
+        {
+            return a < b ? a : b;
+        }
+
+        /// <summary>
+        /// Compares two given values and returns whichever is greater.
+        /// </summary>
+        /// <param name="a">The first given value.</param>
+        /// <param name="b">The second given value.</param>
+        /// <returns>The greater of a and b.</returns>
+        public static float Max(float a, float b)
+        {
+            return a > b ? a : b;
+        }
+
         /// <summary>
         /// Clamps an input between a minimum value 0.0 and a maximum value 1.0.
         /// </summary>
@@ -54,6 +80,89 @@ namespace org.general
             i = Math.Abs(i);
             while (i > 1) i *= i;
             return n ? 1f / i : i;
+        }
+
+        /// <summary>
+        /// Calculates the square root of a given value. (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="f">Value to be evaluated.</param>
+        /// <returns>The square root of f.</returns>
+        public static float Sqrt(float f)
+        {
+            return (float)Math.Sqrt(f);
+        }
+        #endregion
+
+        #region Trigonometric Functions
+        /// <summary>
+        /// Computes the sine of a given angle. (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="a">The angle to evaluate.</param>
+        /// <returns>The trigonometric sine at angle a.</returns>
+        public static float Sin(float a)
+        {
+            return (float)Math.Sin(a);
+        }
+
+        /// <summary>
+        /// Computes the cssine of a given angle. (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="a">The angle to evaluate.</param>
+        /// <returns>The trigonometric cssine at angle a.</returns>
+        public static float Cos(float a)
+        {
+            return (float)Math.Cos(a);
+        }
+
+        /// <summary>
+        /// Computes the tangent of a given angle. (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="a">The angle to evaluate.</param>
+        /// <returns>The trigonometric tangent at angle a.</returns>
+        public static float Tan(float a)
+        {
+            return (float)Math.Tan(a);
+        }
+
+        /// <summary>
+        /// Computes the arcsine of a given angle. Analogous to "sin^-1(a)". (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="a">The angle to evaluate.</param>
+        /// <returns>The trigonometric arcsine at angle a.</returns>
+        public static float Asin(float a)
+        {
+            return (float)Math.Asin(a);
+        }
+
+        /// <summary>
+        /// Computes the cssine of a given angle. Analogous to "sin^-1(a)". (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="a">The angle to evaluate.</param>
+        /// <returns>The trigonometric arccosine at angle a.</returns>
+        public static float Acos(float a)
+        {
+            return (float)Math.Acos(a);
+        }
+
+        /// <summary>
+        /// Computes the tangent of a given angle. Analogous to "sin^-1(a)". (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="a">The angle to evaluate.</param>
+        /// <returns>The trigonometric arctangent at angle a.</returns>
+        public static float Atan(float a)
+        {
+            return (float)Math.Atan(a);
+        }
+
+        /// <summary>
+        /// Computes the arctangent of a given coordinate pair. (Float wrapper for the Math class method.)
+        /// </summary>
+        /// <param name="y">The y coordinate of the coordinate pair.</param>
+        /// <param name="x">The x coordinate of the coordinate pair.</param>
+        /// <returns>The trigonometric tangent at angle formed by the coordinate pair relative to the origin.</returns>
+        public static float Atan2(float y, float x)
+        {
+            return (float)Math.Atan2(y, x);
         }
         #endregion
 
@@ -209,6 +318,32 @@ namespace org.general
 
                 return r;
             }
+        #endregion
+
+        #region Statistical Functions
+        /// <summary>
+        /// Calculates the statistical mean of a given list of values.
+        /// </summary>
+        /// <param name="a">A variable length parameter containing values.</param>
+        /// <returns>The statistical mean of the values.</returns>
+        public static float Mean(params float[] a)
+        {
+            float val = 0;
+            for (int i = 0; i < a.Length; i++) val += a[i];
+            return val / a.Length;
+        }
+
+        /// <summary>
+        /// Calculates the sum of a given list of values.
+        /// </summary>
+        /// <param name="a">A variable length parameter containing values.</param>
+        /// <returns>The sum of the values.</returns>
+        public static float Sum(params float[] a)
+        {
+            float val = 0;
+            for (int i = 0; i < a.Length; i++) val += a[i];
+            return val;
+        }
         #endregion
     }
 }
