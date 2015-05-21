@@ -7,7 +7,7 @@
     <ProjectGuid>{843E6B6A-EE14-4217-A1A4-D91D4692D4D6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.general</RootNamespace>
+    <RootNamespace>org.execute</RootNamespace>
     <AssemblyName>GeneralLibraryProject</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -45,39 +45,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Units\Box\Box\Box.cs" />
-    <Compile Include="ComplexStructures\PointMap.cs" />
-    <Compile Include="Drawing.cs" />
-    <Compile Include="Functions.cs" />
-    <Compile Include="GlobalSettings.cs" />
-    <Compile Include="Imaging.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleFunctions.cs" />
-    <Compile Include="Units\Box\BoxF\BoxF.cs" />
-    <Compile Include="Units\Matrix2D\Matrix2D.cs" />
-    <Compile Include="Units\Matrix2D\Matrix2D.Static.cs" />
-    <Compile Include="Units\Shapes.cs" />
-    <Compile Include="Units\Vector\Vector2\Vector2.Conversions.cs" />
-    <Compile Include="Units\Vector\Vector2\Vector2.cs" />
-    <Compile Include="Units\Vector\Vector2F\Vector2F.cs" />
-    <Compile Include="Units\Vector\Vector2\Vector2.Static.cs" />
-    <Compile Include="Utility.cs" />
-    <Compile Include="Vectorization\ComplexPolygon.cs" />
-    <Compile Include="Vectorization\Polygon.cs" />
-    <Compile Include="Vectorization\VectorImage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Units\Matrix2D\Matrix2D.Transformations.cs" />
-    <Compile Include="Vectorization\Imaging.cs" />
-    <Compile Include="Units\Vector\Vector2F\Vector2F.Static.cs" />
-    <Compile Include="Units\Vector\Vector2F\Vector2F.Conversions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <ProjectReference Include="..\GeneralLibraryDLL\GeneralLibraryDLL.csproj">
+      <Project>{af06f84f-04c2-4875-a04b-abe2f75278e5}</Project>
+      <Name>GeneralLibraryDLL</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

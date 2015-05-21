@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace org.general
+namespace org.execute
 {
     public static class SimpleFunctions
     {
@@ -116,6 +116,40 @@ namespace org.general
                     return roots;
                 }
             }
+        }
+
+        public static double ComputeSquareRoot(double d)
+        {
+            Console.WriteLine("Step      Number         Low        High         Mid      Square    Result\n");
+
+            double eps = 0.0000000000001;
+
+            double low = 0;
+            double high = d;
+            double mid, v;
+            int count = 0;
+
+            do
+            {
+                count++;
+                mid = (high + low) / 2;
+                v = mid * mid;
+
+                Console.WriteLine(
+                    count.ToString().PadLeft(4) + 
+                    d.ToString("F4").PadLeft(12) + 
+                    low.ToString("F4").PadLeft(12) + 
+                    high.ToString("F4").PadLeft(12) +
+                    mid.ToString("F4").PadLeft(12) + 
+                    v.ToString("F4").PadLeft(12) + 
+                    (Math.Abs(d - v) <= eps ? "    close enough" : v < d ? "    too low" : "    too high"));
+
+                if (v < d) low = mid;
+                else high = mid;
+
+            } while (Math.Abs(d - v) > eps);
+
+            return mid;
         }
         #endregion
     }
