@@ -5,7 +5,7 @@ using System.Text;
 
 namespace org.general.Units
 {
-    public class Vector2
+    public partial class Vector2
     {
         int x;
         int y;
@@ -32,42 +32,15 @@ namespace org.general.Units
         {
             return this.x * other.x + this.y * other.y;
         }
+
         public int CrossProduct(Vector2 other)
         {
             return this.x * other.y - this.y * other.x;
         }
 
-        public override string ToString()
-        {
-            return "{ X: " + x + ", Y: " + y + " }";
-        }
-
-        public System.Drawing.Point ToSystemPoint()
-        {
-            return new System.Drawing.Point(x, y);
-        }
-
         public Vector2 Perpendicular()
         {
             return new Vector2(this.Y, -this.X);
-        }
-
-        #region Static Classes
-        public static Vector2 Perpendicular(Vector2 v)
-        {
-            return new Vector2(v.Y, -v.X);
-        }
-        #endregion
-
-        public static class Utility
-        {
-            public static System.Drawing.Point[] ToSystemPointArray(Vector2[] arr)
-            {
-                System.Drawing.Point[] ret = new System.Drawing.Point[arr.Length];
-                for (int i = 0; i < arr.Length; i++)
-                    ret[i] = new System.Drawing.Point(arr[i].x, arr[i].y);
-                return ret;
-            }
         }
     }
 }

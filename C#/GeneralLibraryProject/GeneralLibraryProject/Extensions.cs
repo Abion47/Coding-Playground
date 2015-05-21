@@ -12,5 +12,14 @@ namespace org.general
         {
             return Math.Abs(f) < fEps;
         }
+
+        public static int ToInt(this float f)
+        {
+            return (int)(f + 0.5f);
+        }
+        public static int ToInt(this double f)
+        {
+            return (int)(f + 0.5);
+        }
     }
 }

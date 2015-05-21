@@ -438,9 +438,9 @@ namespace org.general
                         int idx = (y * stride) + (x * bpp);
 
                         // Calculate the distance between the current point and each of the control points
-                        float distA = Vector2F.Utility.Distance(a.Location, new Vector2F(x, y));
-                        float distB = Vector2F.Utility.Distance(b.Location, new Vector2F(x, y));
-                        float distC = Vector2F.Utility.Distance(c.Location, new Vector2F(x, y));
+                        float distA = Vector2F.Distance(a.Location, new Vector2F(x, y));
+                        float distB = Vector2F.Distance(b.Location, new Vector2F(x, y));
+                        float distC = Vector2F.Distance(c.Location, new Vector2F(x, y));
 
                         // Determine weighting based on distances
                         float weightA = distA == 0 ? 1 : 1 / distA;
@@ -487,7 +487,7 @@ namespace org.general
                 byte* ptr = (byte*)data.Scan0;
                 int bpp = 3;
 
-                float bmp_cross = Vector2F.Utility.Distance(
+                float bmp_cross = Vector2F.Distance(
                     new Vector2F(0, 0), new Vector2F(bmp.Width, bmp.Height));
 
                 for (int x = 0; x < bmp.Width; x++)
@@ -504,7 +504,7 @@ namespace org.general
 
                         foreach (var pt in pts)
                         {
-                            float dist = Vector2F.Utility.DistanceSquared(pt.Location, new Vector2F(x, y));
+                            float dist = Vector2F.DistanceSquared(pt.Location, new Vector2F(x, y));
                             float weight = dist == 0 ? 1 : 1 / dist;
 
                             pr += (float)pt.Color.R * weight;
@@ -847,12 +847,12 @@ namespace org.general
 
                         for (int i = -1; i <= 1; i++)
                         {
-                            if (i < 0 && i >= bmp.Width)
+                            if (x + i < 0 || x + i >= bmp.Width)
                                 continue;
 
                             for (int j = -1; j <= 1; j++)
                             {
-                                if (j < 0 && j >= bmp.Height)
+                                if (y + j < 0 || y + j >= bmp.Height)
                                     continue;
 
                                 int b_idx = ((y + j) * stride) + ((x + i) * bpp);
@@ -867,6 +867,101 @@ namespace org.general
                         ptr[idx] = (byte)(avgB / count);
                         ptr[idx + 1] = (byte)(avgG / count);
                         ptr[idx + 2] = (byte)(avgR / count);
+                    }
+                }
+
+                buf.UnlockBits(b_data);
+                bmp.UnlockBits(data);
+
+                buf.Dispose();
+            }
+
+            public static Bitmap WeightedMeanFilter(Bitmap bmp)
+            {
+                Bitmap ret = new Bitmap(bmp);
+                WeightedMeanFilter(ref ret);
+                return ret;
+            }
+            public static unsafe void WeightedMeanFilter(ref Bitmap bmp, float[] weight = null)
+            {
+                if (bmp.PixelFormat != GlobalSettings.DefaultPixelFormat)
+                    throw new NotSupportedException("Only the PixelFormat defined in GlobalSettings is supported.");
+
+                Bitmap buf = new Bitmap(bmp);
+
+                BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
+                byte* ptr = (byte*)data.Scan0;
+                int stride = data.Stride;
+
+                BitmapData b_data = buf.LockBits(new Rectangle(0, 0, buf.Width, buf.Height), ImageLockMode.ReadWrite, buf.PixelFormat);
+                byte* b_ptr = (byte*)data.Scan0;
+                int b_stride = data.Stride;
+
+                int bpp = GlobalSettings.DefaultPixelFormatBpp;
+
+                for (int y = 0; y < bmp.Height; y++)
+                {
+                    for (int x = 0; x < bmp.Width; x++)
+                    {
+                        int idx = (y * stride) + (x * bpp);
+
+                        int[] rValues = new int[9];
+                        int[] gValues = new int[9];
+                        int[] bValues = new int[9];
+
+                        for (int i = -1; i <= 1; i++)
+                        {
+                            for (int j = -1; j <= 1; j++)
+                            {
+                                if (x + i < 0 || x + i >= bmp.Width
+                                    || y + j < 0 || y + j >= bmp.Height)
+                                {
+                                    rValues[(j + 1) * 3 + (i + 1)] = -1;
+                                    gValues[(j + 1) * 3 + (i + 1)] = -1;
+                                    bValues[(j + 1) * 3 + (i + 1)] = -1;
+                                    continue;
+                                }
+
+                                int b_idx = ((y + j) * stride) + ((x + i) * bpp);
+
+                                rValues[(j + 1) * 3 + (i + 1)] = b_ptr[b_idx + 2];
+                                gValues[(j + 1) * 3 + (i + 1)] = b_ptr[b_idx + 1];
+                                bValues[(j + 1) * 3 + (i + 1)] = b_ptr[b_idx];
+                            }
+                        }
+
+                        if (weight == null)
+                            weight = new float[] {
+                                0.1f, 0.25f, 0.1f,
+                                0.25f, 1.0f, 0.25f,
+                                0.1f, 0.25f, 0.1f
+                            };
+
+                        float rT = 0;
+                        float gT = 0;
+                        float bT = 0;
+
+                        float div = 0;
+
+                        for (int i = 0; i < 9; i++) 
+                        {
+                            if (rValues[i] == -1)
+                                continue;
+
+                            rT += rValues[i] * weight[i];
+                            gT += gValues[i] * weight[i];
+                            bT += bValues[i] * weight[i];
+
+                            div += weight[i];
+                        }
+
+                        rT /= div;
+                        gT /= div;
+                        bT /= div;
+
+                        ptr[idx] = (byte)(bT.ToInt());
+                        ptr[idx + 1] = (byte)(gT.ToInt());
+                        ptr[idx + 2] = (byte)(rT.ToInt());
                     }
                 }
 

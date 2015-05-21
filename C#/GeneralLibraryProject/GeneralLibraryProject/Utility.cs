@@ -15,10 +15,17 @@ namespace org.general
 
     class GeometryUtility
     {
-        public static PointF FindIntersectionPoint(PointF p1, PointF p2, PointF p3, PointF p4) { return FindIntersectionPoint(p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y).ToSystemPoint(); }
-        public static Vector2F FindIntersectionPoint(Vector2F p1, Vector2F p2, Vector2F p3, Vector2F p4) { return FindIntersectionPoint(p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y); }
-        public static Vector2F FindIntersectionPoint(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        public static bool FindIntersectionPoint(out PointF intersect, PointF p1, PointF p2, PointF p3, PointF p4) 
         {
+            Vector2F v;
+            bool result =  FindIntersectionPoint(out v, p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y);
+            intersect = v.ToSystemPoint();
+            return result;
+        }
+        public static bool FindIntersectionPoint(out Vector2F intersect, Vector2F p1, Vector2F p2, Vector2F p3, Vector2F p4) { return FindIntersectionPoint(out intersect, p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y, p4.X, p4.Y); }
+        public static bool FindIntersectionPoint(out Vector2F intersect, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        {
+            intersect = null;
             float rx = x2 - x1;
             float ry = y2 - y1;
             float sx = x4 - x3;
@@ -31,7 +38,7 @@ namespace org.general
 
             if (rxs.IsZero())
             {
-                return Vector2F.Empty;
+                return false;
             }
 
             float qpxs = qpx * sy - sx * qpy;
@@ -41,43 +48,11 @@ namespace org.general
             if (0 <= t && t < 1
                 && 0 <= u && u <= 1)
             {
-                return new Vector2F(x1 + (t * rx), y1 + (t * ry));
+                intersect = new Vector2F(x1 + (t * rx), y1 + (t * ry));
+                return true;
             }
 
-            return Vector2F.Empty;
-
-            /*float a1 = y2 - y1;
-            float b1 = x2 - x1;
-            float c1 = a1 * x1 + b1 * x1;
-
-            float a2 = y4 - y3;
-            float b2 = x4 - x3;
-            float c2 = a2 * x3 + b2 * x3;
-
-            float det = a1 * b2 - a2 * b1;
-
-            if (det == 0)
-            {
-                return Vector2F.Empty;
-            }
-            else
-            {
-                Vector2F ret = new Vector2F(
-                    (b2 * c1 - b1 * c2) / det,
-                    (a1 * c2 - a2 * c1) / det);
-
-                if (Math.Min(x1, x2) <= ret.X
-                    && ret.X <= Math.Max(x1, x2)
-                    && Math.Min(y1, y2) <= ret.Y
-                    && ret.Y <= Math.Max(y1, y2))
-                {
-                    return ret;
-                }
-                else
-                {
-                    return Vector2F.Empty;
-                }
-            }*/
+            return false;
         }
 
         public static float Distance(PointF q1, PointF q2)

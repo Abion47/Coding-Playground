@@ -19,12 +19,12 @@ namespace org.general
     {
         static void Main(string[] args)
         {
-            using (Bitmap bmp = new Bitmap(500, 500, PixelFormat.Format32bppArgb))
+            using (Bitmap bmp = new Bitmap(500, 500, GlobalSettings.DefaultPixelFormat))
             {
                 using (Graphics g = Graphics.FromImage(bmp)) g.FillRectangle(Brushes.White, 0, 0, 500, 500);
                 unsafe
                 {
-                    BitmapData data = bmp.LockBits(new Rectangle(0, 0, 500, 500), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                    BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
                     int stride = data.Stride;
                     byte* ptr = (byte*)data.Scan0;
                     int bpp = 4;
@@ -56,9 +56,23 @@ namespace org.general
                     watch.Reset();
                     watch.Start();
 
-                    //Drawing.Bezier.DrawAdaptiveStep(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400));
+                    var p1 = new Vector2F(50, 50);
+                    var p2 = new Vector2F(125, 125);
+                    var p3 = new Vector2F(350, 25);
+                    var p4 = new Vector2F(400, 400);
+                    var p5 = new Vector2F(25, 200);
+                    var p6 = new Vector2F(25, 500);
+                    var p7 = new Vector2F(500, -150);
+                    var p8 = new Vector2F(350, 450);
 
-                    
+                    Drawing.Bezier.DrawCubic(ref ptr, stride, bpp, Color.Red, p1, p2, p3, p4, 10000);
+                    Drawing.Bezier.DrawCubic(ref ptr, stride, bpp, Color.Blue, p5, p6, p7, p8, 10000);
+                    Drawing.Bezier.DrawCubic(ref ptr, stride, bpp, Color.Green, 
+                        Vector2F.Midpoint(p1, p5),
+                        Vector2F.Midpoint(p2, p6),
+                        Vector2F.Midpoint(p3, p7),
+                        Vector2F.Midpoint(p4, p8),
+                        10000);
 
                     /*Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(150, 150), new Vector2F(400, 25));
                     Drawing.Line.Draw(ref ptr, stride, bpp, Color.Magenta, new Vector2F(400, 25), new Vector2F(225, 300));
@@ -69,13 +83,15 @@ namespace org.general
                     Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Yellow, new Vector2F(225, 300), 5);
                     Drawing.Circle.Fill(ref ptr, stride, bpp, Color.Green, new Vector2F(400, 400), 5);*/
 
-                    Drawing.Quadrilateral.Fill(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400));
+                    //Drawing.Quadrilateral.Fill(ref ptr, stride, bpp, Color.Black, new Vector2F(150, 150), new Vector2F(400, 25), new Vector2F(225, 300), new Vector2F(400, 400));
                     watch.Stop();
                     Console.WriteLine("Adaptive Time: " + watch.ElapsedMilliseconds + "ms");
                     bmp.UnlockBits(data);
                 }
 
-                bmp.Save("quad.png");
+                bmp.Save("bezier.png");
+                //Imaging.ImageFilters.MeanFilter(bmp).Save("quad2.png");
+                //Imaging.ImageFilters.WeightedMeanFilter(bmp).Save("quad3.png");
             }
 
             Console.WriteLine("\n\nDone!");

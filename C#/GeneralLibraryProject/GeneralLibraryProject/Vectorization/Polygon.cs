@@ -41,7 +41,7 @@ namespace org.general.Vectorization
                         continue;
                     }
 
-                    slope = Vector2F.Utility.Slope(simplifiedVertices[last], p.vertices[i]);
+                    slope = Vector2F.Slope(simplifiedVertices[last], p.vertices[i]);
 
                     if (float.IsNaN(slope) || float.IsNaN(lastSlope))
                     {

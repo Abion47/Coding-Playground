@@ -293,9 +293,8 @@ namespace org.general
 
                 for (i = 0; i < poly.Length; i++)
                 {
-                    Vector2F intersection = GeometryUtility.FindIntersectionPoint(box.Left, y, box.Right, y, poly[i].X, poly[i].Y, poly[j].X, poly[j].Y);
-
-                    if (!intersection.IsEmpty())
+                    Vector2F intersection;
+                    if (GeometryUtility.FindIntersectionPoint(out intersection, box.Left, y, box.Right, y, poly[i].X, poly[i].Y, poly[j].X, poly[j].Y)) 
                     {
                         nodes.Add(intersection);
                     }
