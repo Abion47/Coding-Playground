@@ -57,6 +57,9 @@
     <Compile Include="Units\Graphics\GBitmapF.cs" />
     <Compile Include="Units\Graphics\GColor.cs" />
     <Compile Include="Units\Graphics\GColorF.cs" />
+    <Compile Include="Units\Numerical\Complex32.cs" />
+    <Compile Include="Units\Numerical\Complex32F.cs" />
+    <Compile Include="Units\Numerical\Int128.cs" />
     <Compile Include="Units\Matrix2D\Matrix2D.cs" />
     <Compile Include="Units\Matrix2D\Matrix2D.Static.cs" />
     <Compile Include="Units\Matrix2D\Matrix2D.Transformations.cs" />
