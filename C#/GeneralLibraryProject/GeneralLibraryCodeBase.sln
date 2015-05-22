@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralLibraryProject", "Ge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralLibraryDLL", "GeneralLibraryDLL\GeneralLibraryDLL.csproj", "{AF06F84F-04C2-4875-A04B-ABE2F75278E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralProjectDX", "GeneralProjectDX\GeneralProjectDX.csproj", "{70F6272A-905E-4CB1-90D6-93AF4001FBE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AF06F84F-04C2-4875-A04B-ABE2F75278E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF06F84F-04C2-4875-A04B-ABE2F75278E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF06F84F-04C2-4875-A04B-ABE2F75278E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70F6272A-905E-4CB1-90D6-93AF4001FBE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70F6272A-905E-4CB1-90D6-93AF4001FBE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70F6272A-905E-4CB1-90D6-93AF4001FBE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70F6272A-905E-4CB1-90D6-93AF4001FBE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
