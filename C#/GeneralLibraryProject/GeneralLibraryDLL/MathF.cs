@@ -8,7 +8,8 @@ namespace org.general
     public class MathF
     {
         #region Constants
-        public const float PI = (float)Math.PI;
+        public static readonly float PI = (float)Math.PI;
+        public static readonly float LOG_2_10 = (float)Math.Log(10, 2);
         #endregion
 
         #region Bounding Functions
@@ -90,6 +91,16 @@ namespace org.general
         public static float Sqrt(float f)
         {
             return (float)Math.Sqrt(f);
+        }
+
+        /// <summary>
+        /// Calculates the orders of magnitude of a base 10 number.
+        /// </summary>
+        /// <param name="f">Value to be analyzed.</param>
+        /// <returns>The order of magnitude of the given value.</returns>
+        public static int Magnitude(float f)
+        {
+            return (int)Math.Log10(f) + 1;
         }
         #endregion
 

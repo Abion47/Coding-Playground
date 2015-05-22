@@ -1,6 +1,7 @@
 ﻿using org.general;
 using org.general.Units;
 using org.general.Units.Graphics;
+using org.general.Units.Numerical;
 
 using System;
 using System.Diagnostics;
@@ -21,10 +22,13 @@ namespace org.execute
     {
         static void Main(string[] args)
         {
-            double d = SimpleFunctions.ComputeSquareRoot(Math.PI);
+            Base10Integer bti = new Base10Integer(-8976435);
+            Base10Integer bti2 = Base10Integer.Parse("-76573");
 
-            Console.WriteLine("\n\n" + d + "\n");
-
+            Console.WriteLine(bti);
+            Console.WriteLine("  " + bti2);
+            Console.WriteLine(bti + bti2);
+            
             Console.WriteLine("\n\nDone!");
             Console.ReadKey();
         }

@@ -295,4 +295,32 @@ namespace org.general
 
         
     }
+
+    public class ToStringUtility
+    {
+        public static string NumberToHex(int i) 
+        {
+            string neg = i < 0 ? "-" : "";
+            switch (Math.Abs(i))
+            {
+                case 0: 
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9: return neg + Math.Abs(i).ToString();
+                case 10: return neg + "A";
+                case 11: return neg + "B";
+                case 12: return neg + "C";
+                case 13: return neg + "D";
+                case 14: return neg + "E";
+                case 15: return neg + "F";
+                default: return neg + NumberToHex(Math.Abs(i) / 16) + NumberToHex(Math.Abs(i) % 16);
+            }
+        }
+    }
 }
